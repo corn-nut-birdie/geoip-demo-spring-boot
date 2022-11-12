@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Optional;
 
 @Controller
-//@RequestMapping("geo-ip")
 @CrossOrigin
 @Slf4j
 public class GeoIpController {
