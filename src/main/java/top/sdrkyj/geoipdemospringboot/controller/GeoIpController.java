@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseBody;
 import top.sdrkyj.geoipdemospringboot.geoip.GeoParser;
 import top.sdrkyj.geoipdemospringboot.geoip.entity.GeoIpHolder;
@@ -28,10 +29,11 @@ public class GeoIpController {
 
     @GetMapping
     @ResponseBody
-    public Map<String, Object> geoIp(HttpServletRequest request) throws IOException, GeoIp2Exception {
+    public Map<String, Object> geoIp(HttpServletRequest request,
+                                     @RequestHeader(value = "x-forwarded-for", required = false) String xForwardedFor) throws IOException, GeoIp2Exception {
         log.debug("geoIp entered");
 
-        String addr = Optional.ofNullable(request.getHeader("x-real-ip")).orElse(request.getRemoteAddr());
+        String addr = Optional.ofNullable(xForwardedFor).orElse(request.getRemoteAddr());
 
         GeoIpHolder holder = geoParser.parse(addr);
         Map<String, Object> map = new LinkedHashMap<>();
@@ -44,10 +46,11 @@ public class GeoIpController {
 
     @GetMapping("slim")
     @ResponseBody
-    public Map<String, Object> geoIpSlim(HttpServletRequest request) throws IOException, GeoIp2Exception {
+    public Map<String, Object> geoIpSlim(HttpServletRequest request,
+                                         @RequestHeader(value = "x-forwarded-for", required = false) String xForwardedFor) throws IOException, GeoIp2Exception {
         log.debug("geoIpSlim entered");
 
-        String addr = Optional.ofNullable(request.getHeader("x-real-ip")).orElse(request.getRemoteAddr());
+        String addr = Optional.ofNullable(xForwardedFor).orElse(request.getRemoteAddr());
         GeoIpHolder holder = geoParser.parse(addr);
 
         Map<String, Object> map = new LinkedHashMap<>();
